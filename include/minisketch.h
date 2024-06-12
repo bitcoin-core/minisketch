@@ -248,8 +248,8 @@ public:
     /** Check whether this Minisketch object is valid. */
     explicit operator bool() const noexcept { return bool{m_minisketch}; }
 
-    /** Construct an (invalid) Minisketch object. */
-    Minisketch() noexcept = default;
+    /** Default constructor is deleted. */
+    Minisketch() noexcept = delete;
 
     /** Move constructor. */
     Minisketch(Minisketch&&) noexcept = default;
