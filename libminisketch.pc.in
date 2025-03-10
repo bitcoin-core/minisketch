@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: @PACKAGE_NAME@
+Description: An optimized library for BCH-based set reconciliation.
+Version: @PACKAGE_VERSION@
+URL: @PACKAGE_URL@
+Libs: -L${libdir} -lminisketch
+Cflags: -I${includedir}

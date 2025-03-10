@@ -6,6 +6,9 @@ include sources.mk
 include_HEADERS = $(MINISKETCH_DIST_HEADERS_INT)
 noinst_HEADERS = $(MINISKETCH_LIB_HEADERS_INT) $(MINISKETCH_FIELD_GENERIC_HEADERS_INT) $(MINISKETCH_FIELD_CLMUL_HEADERS_INT)
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libminisketch.pc
+
 LIBMINISKETCH = libminisketch.la
 LIBMINISKETCH_FIELD_GENERIC = libminisketch_field_generic.la
 if ENABLE_CLMUL
