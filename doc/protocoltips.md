@@ -1,6 +1,6 @@
 # Tips for designing protocols using `libminisketch`
 
-Sending a sketch is less efficient than just sending your whole set with efficient entropy coding if the number of differences is larger than *log<sub>2</sub>( 2<sup>b</sup> choose set_size ) / b*.
+Sending a sketch is less efficient than just sending your whole set with efficient entropy coding if the number of differences is larger than *log<sub>2</sub>( 2<sup>b</sup> choose set_size ) / b*. For reasonable "real-world" values of set_size and b, this comes to roughly 60% - 90%+ of set_size.
 
 In most applications your set can be hashed to entries just large enough to make the probability of collision negligible. This can be a considerable speedup and bandwidth savings.  Short hashes (<128 bits) should be salted with an unpredictable value to prevent malicious inputs from intentionally causing collisions. Salting also allows an entry missed due to a collision to be reconciled on a later run with a different salt. Pre-hashing may not be possible in some applications, such as where there is only one-way communication, where the confidentiality of entry origin matters, or where security depends on the total absence of collisions.
 
