@@ -49,7 +49,7 @@ public:
     Elem FromSeed(uint64_t seed) const {
         uint64_t k0 = 0x496e744669656c64ull; // "IntField"
         uint64_t k1 = seed;
-        uint64_t count = ((uint64_t)B) << 32;
+        uint64_t count = (uint64_t(B)) << 32;
         Elem ret;
         do {
             ret = O::Mask(I(SipHash(k0, k1, count++)));

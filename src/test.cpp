@@ -35,7 +35,7 @@ std::vector<Minisketch> CreateSketches(uint32_t bits, size_t capacity) {
         if (Minisketch::ImplementationSupported(bits, impl)) {
             CHECK(Minisketch::BitsSupported(bits));
             ret.push_back(Minisketch(bits, impl, capacity));
-            CHECK((bool)ret.back());
+            CHECK(bool{ret.back()});
         } else {
             // implementation 0 must always work unless field size is disabled
             CHECK(impl != 0 || !Minisketch::BitsSupported(bits));
@@ -275,7 +275,7 @@ int main(int argc, char** argv) {
         try {
             test_complexity = 0;
             long long complexity = std::stoll(arg, &len);
-            if (complexity >= 1 && len == arg.size() && ((uint64_t)complexity <= std::numeric_limits<uint64_t>::max() >> 10)) {
+            if (complexity >= 1 && len == arg.size() && (uint64_t(complexity) <= std::numeric_limits<uint64_t>::max() >> 10)) {
                 test_complexity = complexity;
             }
         } catch (const std::logic_error&) {}
@@ -290,7 +290,7 @@ int main(int argc, char** argv) {
 #else
     const char* mode = "";
 #endif
-    printf("Running libminisketch tests%s with complexity=%llu\n", mode, (unsigned long long)test_complexity);
+    printf("Running libminisketch tests%s with complexity=%llu\n", mode, (unsigned long long){test_complexity});
 
     TestComputeFunctions();
 

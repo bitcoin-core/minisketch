@@ -33,7 +33,7 @@ template<typename I, int BITS, I MOD> NO_SANITIZE_MEMORY I MulWithClMulReduce(I 
     static constexpr I MASK = Mask<BITS, I>();
 
     const __m128i MOD128 = _mm_cvtsi64_si128(MOD);
-    __m128i product = _mm_clmulepi64_si128(_mm_cvtsi64_si128((uint64_t)a), _mm_cvtsi64_si128((uint64_t)b), 0x00);
+    __m128i product = _mm_clmulepi64_si128(_mm_cvtsi64_si128(uint64_t{a}), _mm_cvtsi64_si128(uint64_t{b}), 0x00);
     if (BITS <= 32) {
         __m128i high1 = _mm_srli_epi64(product, BITS);
         __m128i red1 = _mm_clmulepi64_si128(high1, MOD128, 0x00); 
@@ -53,7 +53,7 @@ template<typename I, int BITS, I MOD> NO_SANITIZE_MEMORY I MulWithClMulReduce(I 
     } else {
         __m128i high1 = _mm_or_si128(_mm_srli_epi64(product, BITS), _mm_srli_si128(_mm_slli_epi64(product, 64 - BITS), 8));
         __m128i red1 = _mm_clmulepi64_si128(high1, MOD128, 0x00);
-        if ((uint64_t(MOD) >> (66 - BITS)) == 0) {
+        if ((uint64_t{MOD} >> (66 - BITS)) == 0) {
             __m128i high2 = _mm_srli_epi64(red1, BITS);
             __m128i red2 = _mm_clmulepi64_si128(high2, MOD128, 0x00);
             return _mm_cvtsi128_si64(_mm_xor_si128(_mm_xor_si128(product, red1), red2)) & MASK;
@@ -69,7 +69,7 @@ template<typename I, int BITS, int POS> NO_SANITIZE_MEMORY I MulTrinomial(I a, I
 {
     static constexpr I MASK = Mask<BITS, I>();
 
-    __m128i product = _mm_clmulepi64_si128(_mm_cvtsi64_si128((uint64_t)a), _mm_cvtsi64_si128((uint64_t)b), 0x00);
+    __m128i product = _mm_clmulepi64_si128(_mm_cvtsi64_si128(uint64_t{a}), _mm_cvtsi64_si128(uint64_t{b}), 0x00);
     if (BITS <= 32) {
         __m128i high1 = _mm_srli_epi64(product, BITS);
         __m128i red1 = _mm_xor_si128(high1, _mm_slli_epi64(high1, POS));
@@ -92,7 +92,7 @@ template<typename I, int BITS, int POS> NO_SANITIZE_MEMORY I MulTrinomial(I a, I
                 return _mm_cvtsi128_si64(_mm_xor_si128(_mm_xor_si128(product, red1), red2)) & MASK;
             }
         } else {
-            const __m128i MOD128 = _mm_cvtsi64_si128(1 + (((uint64_t)1) << POS));
+            const __m128i MOD128 = _mm_cvtsi64_si128(1 + ((uint64_t{1}) << POS));
             __m128i red1 = _mm_clmulepi64_si128(high1, MOD128, 0x00);
             __m128i high2 = _mm_or_si128(_mm_srli_epi64(red1, BITS), _mm_srli_si128(_mm_slli_epi64(red1, 64 - BITS), 8));
             __m128i red2 = _mm_xor_si128(high2, _mm_slli_epi64(high2, POS));
@@ -143,7 +143,7 @@ public:
     Elem FromSeed(uint64_t seed) const {
         uint64_t k0 = 0x434c4d554c466c64ull; // "CLMULFld"
         uint64_t k1 = seed;
-        uint64_t count = ((uint64_t)B) << 32;
+        uint64_t count = uint64_t{B} << 32;
         I ret;
         do {
             ret = O::Mask(I(SipHash(k0, k1, count++)));
@@ -156,7 +156,7 @@ public:
     void Serialize(BitWriter& out, Elem val) const { out.Write<B, I>(SAVE->template Map<O>(val)); }
 
     constexpr Elem FromUint64(uint64_t x) const { return LOAD->template Map<O>(O::Mask(I(x))); }
-    constexpr uint64_t ToUint64(Elem val) const { return uint64_t(SAVE->template Map<O>(val)); }
+    constexpr uint64_t ToUint64(Elem val) const { return uint64_t{SAVE->template Map<O>(val)}; }
 };
 
 template<typename I, int B, I MOD, typename F, const F* SQR, const F* SQR2, const F* SQR4, const F* SQR8, const F* SQR16, const F* QRT, typename T, const T* LOAD, const T* SAVE>
