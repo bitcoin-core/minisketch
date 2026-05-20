@@ -18,10 +18,23 @@
 #include "sketch.h"
 
 #ifdef HAVE_CLMUL
-#  ifdef _MSC_VER
-#    include <intrin.h>
-#  else
-#    include <cpuid.h>
+#  if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) || defined(_M_IX86)
+#    ifdef _MSC_VER
+#      include <intrin.h>
+#    else
+#      include <cpuid.h>
+#    endif
+#  elif defined(__aarch64__) || defined(__arm__) || defined(_M_ARM64)
+#    if defined(__APPLE__)
+       /* Apple Silicon and A7+ always have PMULL; no runtime check needed. */
+#    elif defined(_WIN32)
+#      include <processthreadsapi.h>
+#    elif defined(__linux__)
+#      include <sys/auxv.h>
+#      include <asm/hwcap.h>
+#    elif defined(__FreeBSD__)
+#      include <sys/auxv.h>
+#    endif
 #  endif
 #endif
 
@@ -66,13 +79,37 @@ enum class FieldImpl {
 #ifdef HAVE_CLMUL
 static inline bool EnableClmul()
 {
-#ifdef _MSC_VER
+#if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) || defined(_M_IX86)
+#  ifdef _MSC_VER
     int regs[4];
     __cpuid(regs, 1);
     return (regs[2] & 0x2);
-#else
+#  else
     uint32_t eax, ebx, ecx, edx;
     return (__get_cpuid(1, &eax, &ebx, &ecx, &edx) && (ecx & 0x2));
+#  endif
+#elif defined(__aarch64__) || defined(__arm__) || defined(_M_ARM64)
+#  if defined(__APPLE__)
+    return true;
+#  elif defined(_WIN32)
+    return IsProcessorFeaturePresent(PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE) != 0;
+#  elif defined(__linux__)
+#    if defined(__aarch64__)
+    return (getauxval(AT_HWCAP) & HWCAP_PMULL) != 0;
+#    else
+    return (getauxval(AT_HWCAP2) & HWCAP2_PMULL) != 0;
+#    endif
+#  elif defined(__FreeBSD__)
+    unsigned long hwcap = 0;
+    elf_aux_info(AT_HWCAP, &hwcap, sizeof(hwcap));
+    return (hwcap & HWCAP_PMULL) != 0;
+#  else
+    /* Unknown ARM OS: trust the compile-time gate. */
+    return true;
+#  endif
+#else
+    /* Unknown architecture with HAVE_CLMUL defined: trust the compile-time gate. */
+    return true;
 #endif
 }
 #endif

@@ -57,6 +57,7 @@ AX_CHECK_COMPILE_FLAG([-Werror],[CXXFLAG_WERROR="-Werror"],[CXXFLAG_WERROR=""])
 
 AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 enable_clmul=
+enable_pmull=
 AX_CHECK_COMPILE_FLAG([-mpclmul],[[enable_clmul=yes]],,[[$CXXFLAG_WERROR]],[AC_LANG_PROGRAM([
   #include <stdint.h>
   #include <x86intrin.h>
@@ -70,7 +71,26 @@ AX_CHECK_COMPILE_FLAG([-mpclmul],[[enable_clmul=yes]],,[[$CXXFLAG_WERROR]],[AC_L
 ])])
 if test x$enable_clmul = xyes; then
   CLMUL_CXXFLAGS="-mpclmul"
-  AC_DEFINE(HAVE_CLMUL, 1, [Define this symbol if clmul instructions can be used])
+  AC_DEFINE(HAVE_CLMUL, 1, [Define this symbol if clmul (x86) or pmull (ARM) instructions can be used])
+else
+  dnl Fall back to ARMv8 crypto (PMULL/PMULL2). aarch64 uses -march=armv8-a+crypto;
+  AX_CHECK_COMPILE_FLAG([-march=armv8-a+crypto],[[enable_pmull=yes]],,[[$CXXFLAG_WERROR]],[AC_LANG_PROGRAM([
+    #include <stdint.h>
+    #include <arm_neon.h>
+  ], [
+    uint64x2_t a = vcombine_u64(vcreate_u64((uint64_t)7), vdup_n_u64(0));
+    poly64_t al = (poly64_t)vgetq_lane_u64(a, 0);
+    poly128_t p = vmull_p64(al, al);
+    uint64x2_t b = vreinterpretq_u64_p128(p);
+    uint64x2_t c = vshrq_n_u64(b, 41);
+    uint64x2_t d = veorq_u64(b, c);
+    uint64_t e = vgetq_lane_u64(d, 0);
+    return e == 0;
+  ])])
+  if test x$enable_pmull = xyes; then
+    CLMUL_CXXFLAGS="-march=armv8-a+crypto"
+    AC_DEFINE(HAVE_CLMUL, 1, [Define this symbol if clmul (x86) or pmull (ARM) instructions can be used])
+  fi
 fi
 
 
@@ -133,7 +153,7 @@ AC_SUBST(NOWARN_CXXFLAGS)
 AC_SUBST(VERIFY_DEFINES)
 AC_SUBST(RELEASE_DEFINES)
 AC_SUBST(LIBTOOL_APP_LDFLAGS)
-AM_CONDITIONAL([ENABLE_CLMUL],[test x$enable_clmul = xyes])
+AM_CONDITIONAL([ENABLE_CLMUL],[test x$enable_clmul = xyes -o x$enable_pmull = xyes])
 AM_CONDITIONAL([USE_BENCHMARK], [test x"$use_benchmark" = x"yes"])
 AM_CONDITIONAL([USE_TESTS], [test x"$use_tests" != x"no"])
 AC_OUTPUT
@@ -143,6 +163,7 @@ echo "Build Options:"
 echo "  with benchmarks         = $use_benchmark"
 echo "  with tests              = $use_tests"
 echo "  enable clmul fields     = $enable_clmul"
+echo "  enable pmull fields     = $enable_pmull"
 echo "  CXX                     = $CXX"
 echo "  CXXFLAGS                = $CXXFLAGS"
 echo "  CPPFLAGS                = $CPPFLAGS"
