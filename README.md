@@ -222,6 +222,7 @@ Specific algorithms and optimizations used:
 * Decoding of sketches uses the [Berlekamp-Massey algorithm](https://en.wikipedia.org/w/index.php?title=Berlekamp%E2%80%93Massey_algorithm&oldid=870768940)<sup>[[3]](#myfootnote3)</sup> to compute the characteristic polynomial.
 * Finding the roots of polynomials is done using the Berlekamp trace algorithm with explicit formula for quadratic polynomials<sup>[[4]](#myfootnote4)</sup>. The root finding is randomized to prevent adversarial inputs that intentionally trigger worst-case decode time.
 * A (possibly) novel optimization combines a test for unique roots with the Berlekamp trace algorithm.
+* Two different precomputation approaches for efficient reduction mod a polynomial in the BTA computation of the trace.
 
 Some improvements that are still TODO:
 * Explicit formulas for the roots of polynomials of higher degree than 2
