@@ -6,10 +6,10 @@
 set -e
 srcdir="$(dirname $0)"
 cd "$srcdir"
-if [ -z ${LIBTOOLIZE} ] && GLIBTOOLIZE="`which glibtoolize 2>/dev/null`"; then
+if [ -z ${LIBTOOLIZE} ] && GLIBTOOLIZE="$(which glibtoolize 2>/dev/null)"; then
   LIBTOOLIZE="${GLIBTOOLIZE}"
   export LIBTOOLIZE
 fi
-which autoreconf >/dev/null || \
-  (echo "configuration failed, please install autoconf first" && exit 1)
+command -v autoreconf >/dev/null || \
+  (echo "configuration failed, please install autoconf first" >&2 && exit 1)
 autoreconf --install --force --warnings=all
