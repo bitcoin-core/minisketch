@@ -4,7 +4,6 @@
 *.dll
 *.dylib
 *.so.*
-.*
 *.a
 *~
 
@@ -30,6 +29,9 @@ config.status
 configure
 libtool
 stamp-h1
+/.libs/
+.deps/
+.dirstamp
 
 test*
 bench
