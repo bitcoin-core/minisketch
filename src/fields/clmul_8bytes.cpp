@@ -14,6 +14,7 @@
 #include "../int_utils.h"
 #include "../lintrans.h"
 #include "../sketch_impl.h"
+#include "../util.h"
 
 #endif
 
@@ -129,7 +130,7 @@ typedef Field<uint64_t, 64, 27, StatTable64, &SQR_TABLE_64, &SQR2_TABLE_64, &SQR
 #endif
 }
 
-Sketch* ConstructClMul8Bytes(int bits, int implementation) {
+Sketch* ConstructClMul8Bytes(int bits, MAYBE_UNUSED int implementation) {
     switch (bits) {
 #ifdef ENABLE_FIELD_INT_57
     case 57: return new SketchImpl<Field57>(implementation, 57);
@@ -153,7 +154,7 @@ Sketch* ConstructClMul8Bytes(int bits, int implementation) {
     return nullptr;
 }
 
-Sketch* ConstructClMulTri8Bytes(int bits, int implementation) {
+Sketch* ConstructClMulTri8Bytes(int bits, MAYBE_UNUSED int implementation) {
     switch (bits) {
 #ifdef ENABLE_FIELD_INT_57
     case 57: return new SketchImpl<FieldTri57>(implementation, 57);

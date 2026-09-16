@@ -13,6 +13,7 @@
 
 #include "../lintrans.h"
 #include "../sketch_impl.h"
+#include "../util.h"
 
 #endif
 
@@ -92,7 +93,7 @@ typedef Field<uint16_t, 16, 43, StatTable16, DynTable16, &SQR_TABLE_16, &QRT_TAB
 #endif
 }
 
-Sketch* ConstructGeneric2Bytes(int bits, int implementation)
+Sketch* ConstructGeneric2Bytes(int bits, MAYBE_UNUSED int implementation)
 {
     switch (bits) {
 #ifdef ENABLE_FIELD_INT_9

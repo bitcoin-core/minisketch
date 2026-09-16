@@ -14,6 +14,7 @@
 #include "../int_utils.h"
 #include "../lintrans.h"
 #include "../sketch_impl.h"
+#include "../util.h"
 
 #endif
 
@@ -122,7 +123,7 @@ typedef Field<uint64_t, 40, 57, StatTable40, &SQR_TABLE_40, &SQR2_TABLE_40, &SQR
 #endif
 }
 
-Sketch* ConstructClMul5Bytes(int bits, int implementation) {
+Sketch* ConstructClMul5Bytes(int bits, MAYBE_UNUSED int implementation) {
     switch (bits) {
 #ifdef ENABLE_FIELD_INT_33
     case 33: return new SketchImpl<Field33>(implementation, 33);
@@ -152,7 +153,7 @@ Sketch* ConstructClMul5Bytes(int bits, int implementation) {
     return nullptr;
 }
 
-Sketch* ConstructClMulTri5Bytes(int bits, int implementation) {
+Sketch* ConstructClMulTri5Bytes(int bits, MAYBE_UNUSED int implementation) {
     switch (bits) {
 #ifdef ENABLE_FIELD_INT_33
     case 33: return new SketchImpl<FieldTri33>(implementation, 33);
