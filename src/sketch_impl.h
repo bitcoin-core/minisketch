@@ -360,11 +360,11 @@ class SketchImpl final : public Sketch
 
 public:
     template<typename... Args>
-    SketchImpl(int implementation, int bits, const Args&... args) : Sketch(implementation, bits), m_field(args...) {
-        std::random_device rng;
-        std::uniform_int_distribution<uint64_t> dist;
-        m_basis = m_field.FromSeed(dist(rng));
+    SketchImpl(int implementation, int bits, uint64_t seed, const Args&... args) : Sketch(implementation, bits), m_field(args...) {
+        m_basis = m_field.FromSeed(seed);
     }
+
+    SketchImpl(const SketchImpl& other) = default;
 
     size_t Syndromes() const override { return m_syndromes.size(); }
     void Init(size_t count) override { m_syndromes.assign(count, 0); }
@@ -428,6 +428,11 @@ public:
         } else {
             m_basis = m_field.FromSeed(seed);
         }
+    }
+
+    Sketch* Clone() const override
+    {
+        return new SketchImpl<F>(*this);
     }
 };
 

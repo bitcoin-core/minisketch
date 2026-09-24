@@ -35,6 +35,7 @@ public:
     virtual void Deserialize(const unsigned char*) = 0;
     virtual size_t Merge(const Sketch* other_sketch) = 0;
     virtual void SetSeed(uint64_t seed) = 0;
+    virtual Sketch* Clone() const = 0;
 
     virtual int Decode(int max_count, uint64_t* roots) const = 0;
 };

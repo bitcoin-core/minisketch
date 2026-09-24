@@ -25,32 +25,32 @@
 #  endif
 #endif
 
-Sketch* ConstructGeneric1Byte(int bits, int implementation);
-Sketch* ConstructGeneric2Bytes(int bits, int implementation);
-Sketch* ConstructGeneric3Bytes(int bits, int implementation);
-Sketch* ConstructGeneric4Bytes(int bits, int implementation);
-Sketch* ConstructGeneric5Bytes(int bits, int implementation);
-Sketch* ConstructGeneric6Bytes(int bits, int implementation);
-Sketch* ConstructGeneric7Bytes(int bits, int implementation);
-Sketch* ConstructGeneric8Bytes(int bits, int implementation);
+Sketch* ConstructGeneric1Byte(int bits, int implementation, uint64_t seed);
+Sketch* ConstructGeneric2Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructGeneric3Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructGeneric4Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructGeneric5Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructGeneric6Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructGeneric7Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructGeneric8Bytes(int bits, int implementation, uint64_t seed);
 
 #ifdef HAVE_CLMUL
-Sketch* ConstructClMul1Byte(int bits, int implementation);
-Sketch* ConstructClMul2Bytes(int bits, int implementation);
-Sketch* ConstructClMul3Bytes(int bits, int implementation);
-Sketch* ConstructClMul4Bytes(int bits, int implementation);
-Sketch* ConstructClMul5Bytes(int bits, int implementation);
-Sketch* ConstructClMul6Bytes(int bits, int implementation);
-Sketch* ConstructClMul7Bytes(int bits, int implementation);
-Sketch* ConstructClMul8Bytes(int bits, int implementation);
-Sketch* ConstructClMulTri1Byte(int bits, int implementation);
-Sketch* ConstructClMulTri2Bytes(int bits, int implementation);
-Sketch* ConstructClMulTri3Bytes(int bits, int implementation);
-Sketch* ConstructClMulTri4Bytes(int bits, int implementation);
-Sketch* ConstructClMulTri5Bytes(int bits, int implementation);
-Sketch* ConstructClMulTri6Bytes(int bits, int implementation);
-Sketch* ConstructClMulTri7Bytes(int bits, int implementation);
-Sketch* ConstructClMulTri8Bytes(int bits, int implementation);
+Sketch* ConstructClMul1Byte(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMul2Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMul3Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMul4Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMul5Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMul6Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMul7Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMul8Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMulTri1Byte(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMulTri2Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMulTri3Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMulTri4Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMulTri5Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMulTri6Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMulTri7Bytes(int bits, int implementation, uint64_t seed);
+Sketch* ConstructClMulTri8Bytes(int bits, int implementation, uint64_t seed);
 #endif
 
 namespace {
@@ -77,27 +77,27 @@ static inline bool EnableClmul()
 }
 #endif
 
-Sketch* Construct(int bits, int impl)
+Sketch* Construct(int bits, int impl, uint64_t seed)
 {
     switch (FieldImpl(impl)) {
     case FieldImpl::GENERIC:
         switch ((bits + 7) / 8) {
         case 1:
-            return ConstructGeneric1Byte(bits, impl);
+            return ConstructGeneric1Byte(bits, impl, seed);
         case 2:
-            return ConstructGeneric2Bytes(bits, impl);
+            return ConstructGeneric2Bytes(bits, impl, seed);
         case 3:
-            return ConstructGeneric3Bytes(bits, impl);
+            return ConstructGeneric3Bytes(bits, impl, seed);
         case 4:
-            return ConstructGeneric4Bytes(bits, impl);
+            return ConstructGeneric4Bytes(bits, impl, seed);
         case 5:
-            return ConstructGeneric5Bytes(bits, impl);
+            return ConstructGeneric5Bytes(bits, impl, seed);
         case 6:
-            return ConstructGeneric6Bytes(bits, impl);
+            return ConstructGeneric6Bytes(bits, impl, seed);
         case 7:
-            return ConstructGeneric7Bytes(bits, impl);
+            return ConstructGeneric7Bytes(bits, impl, seed);
         case 8:
-            return ConstructGeneric8Bytes(bits, impl);
+            return ConstructGeneric8Bytes(bits, impl, seed);
         default:
             return nullptr;
         }
@@ -107,21 +107,21 @@ Sketch* Construct(int bits, int impl)
         if (EnableClmul()) {
             switch ((bits + 7) / 8) {
             case 1:
-                return ConstructClMul1Byte(bits, impl);
+                return ConstructClMul1Byte(bits, impl, seed);
             case 2:
-                return ConstructClMul2Bytes(bits, impl);
+                return ConstructClMul2Bytes(bits, impl, seed);
             case 3:
-                return ConstructClMul3Bytes(bits, impl);
+                return ConstructClMul3Bytes(bits, impl, seed);
             case 4:
-                return ConstructClMul4Bytes(bits, impl);
+                return ConstructClMul4Bytes(bits, impl, seed);
             case 5:
-                return ConstructClMul5Bytes(bits, impl);
+                return ConstructClMul5Bytes(bits, impl, seed);
             case 6:
-                return ConstructClMul6Bytes(bits, impl);
+                return ConstructClMul6Bytes(bits, impl, seed);
             case 7:
-                return ConstructClMul7Bytes(bits, impl);
+                return ConstructClMul7Bytes(bits, impl, seed);
             case 8:
-                return ConstructClMul8Bytes(bits, impl);
+                return ConstructClMul8Bytes(bits, impl, seed);
             default:
                 return nullptr;
             }
@@ -131,21 +131,21 @@ Sketch* Construct(int bits, int impl)
         if (EnableClmul()) {
             switch ((bits + 7) / 8) {
             case 1:
-                return ConstructClMulTri1Byte(bits, impl);
+                return ConstructClMulTri1Byte(bits, impl, seed);
             case 2:
-                return ConstructClMulTri2Bytes(bits, impl);
+                return ConstructClMulTri2Bytes(bits, impl, seed);
             case 3:
-                return ConstructClMulTri3Bytes(bits, impl);
+                return ConstructClMulTri3Bytes(bits, impl, seed);
             case 4:
-                return ConstructClMulTri4Bytes(bits, impl);
+                return ConstructClMulTri4Bytes(bits, impl, seed);
             case 5:
-                return ConstructClMulTri5Bytes(bits, impl);
+                return ConstructClMulTri5Bytes(bits, impl, seed);
             case 6:
-                return ConstructClMulTri6Bytes(bits, impl);
+                return ConstructClMulTri6Bytes(bits, impl, seed);
             case 7:
-                return ConstructClMulTri7Bytes(bits, impl);
+                return ConstructClMulTri7Bytes(bits, impl, seed);
             case 8:
-                return ConstructClMulTri8Bytes(bits, impl);
+                return ConstructClMulTri8Bytes(bits, impl, seed);
             default:
                 return nullptr;
             }
@@ -366,7 +366,7 @@ int minisketch_implementation_supported(uint32_t bits, uint32_t implementation) 
         return 0;
     }
     try {
-        Sketch* sketch = Construct(bits, implementation);
+        Sketch* sketch = Construct(bits, implementation, 0);
         if (sketch) {
             delete sketch;
             return 1;
@@ -375,9 +375,9 @@ int minisketch_implementation_supported(uint32_t bits, uint32_t implementation) 
     return 0;
 }
 
-minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t capacity) {
+minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t capacity, uint64_t seed) {
     try {
-        Sketch* sketch = Construct(bits, implementation);
+        Sketch* sketch = Construct(bits, implementation, seed);
         if (sketch) {
             try {
                 sketch->Init(capacity);
@@ -414,9 +414,9 @@ uint32_t minisketch_implementation(const minisketch* sketch) {
 minisketch* minisketch_clone(const minisketch* sketch) {
     const Sketch* s = (const Sketch*)sketch;
     s->Check();
-    Sketch* r = (Sketch*) minisketch_create(s->Bits(), s->Implementation(), s->Syndromes());
+    Sketch* r = s->Clone();
     if (r) {
-        r->Merge(s);
+        r->Check();
     }
     return (minisketch*) r;
 }

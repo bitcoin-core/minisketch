@@ -18,6 +18,8 @@ int main(int argc, char** argv) {
         printf("Usage: %s [syndromes=150] [errors=syndromes] [iters=10]\n", argv[0]);
         return 1;
     }
+    std::random_device rng;
+    std::uniform_int_distribution<uint64_t> dist;
     int syndromes = argc > 1 ? strtoul(argv[1], NULL, 10) : 150;
     int errors = argc > 2 ? strtoul(argv[2], NULL, 10) : syndromes;
     int iters = argc > 3 ? strtoul(argv[3], NULL, 10) : 10;
@@ -47,7 +49,7 @@ int main(int argc, char** argv) {
             std::vector<double> benches;
             benches.reserve(iters);
             for (int i = 0; i < iters; ++i) {
-                states[i] = minisketch_create(bits, impl, syndromes);
+                states[i] = minisketch_create(bits, impl, syndromes, dist(rng));
                 if (!states[i]) break;
                 std::set<uint64_t> done;
                 for (int j = 0; j < errors; ++j) {
@@ -80,15 +82,13 @@ int main(int argc, char** argv) {
         printf("create[ns]\t% 3i\t", bits);
         for (uint32_t impl = 0; impl <= max_impl; ++impl) {
             std::vector<minisketch*> states;
-            std::random_device rng;
-            std::uniform_int_distribution<uint64_t> dist;
             std::vector<uint64_t> data;
             data.resize(errors * 10);
             states.resize(iters);
             std::vector<double> benches;
             benches.reserve(iters);
             for (int i = 0; i < iters; ++i) {
-                states[i] = minisketch_create(bits, impl, syndromes);
+                states[i] = minisketch_create(bits, impl, syndromes, dist(rng));
             }
             for (size_t i = 0; i < data.size(); ++i) {
                 data[i] = dist(rng);
