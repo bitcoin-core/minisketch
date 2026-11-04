@@ -398,7 +398,7 @@ public:
         auto poly = BerlekampMassey(all_syndromes, max_count, m_field);
         if (poly.size() == 0) return -1;
         if (poly.size() == 1) return 0;
-        if ((int)poly.size() > 1 + max_count) return -1;
+        if (int(poly.size()) > 1 + max_count) return -1;
         std::reverse(poly.begin(), poly.end());
         auto roots = FindRoots(poly, m_basis, m_field);
         if (roots.size() == 0) return -1;
@@ -423,7 +423,7 @@ public:
 
     void SetSeed(uint64_t seed) override
     {
-        if (seed == (uint64_t)-1) {
+        if (seed == std::numeric_limits<uint64_t>::max()) {
             m_basis = 1;
         } else {
             m_basis = m_field.FromSeed(seed);
