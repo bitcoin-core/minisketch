@@ -1,6 +1,7 @@
 *.o
 *.lo
 *.la
+*.pc
 *.dll
 *.dylib
 *.so.*
