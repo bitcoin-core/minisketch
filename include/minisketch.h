@@ -60,16 +60,19 @@ MINISKETCH_API uint32_t minisketch_implementation_max(void);
  */
 MINISKETCH_API int minisketch_implementation_supported(uint32_t bits, uint32_t implementation);
 
-/** Construct a sketch for a given element size, implementation and capacity.
+/** Construct a sketch for a given element size, implementation, capacity, and RNG seed.
  *
  * If the combination of `bits` and `implementation` is unavailable, or when
  * OOM occurs, NULL is returned. If minisketch_implementation_supported
  * returns 1 for the specified bits and implementation, this will always succeed
  * (except when allocation fails).
  *
+ * To protect against bad performance on maliciously-created sketches, it is
+ * to use strong randomness for the provided seed value.
+ *
  * If the result is not NULL, it must be destroyed using minisketch_destroy.
  */
-MINISKETCH_API minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t capacity);
+MINISKETCH_API minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t capacity, uint64_t seed);
 
 /** Get the element size of a sketch in bits. */
 MINISKETCH_API uint32_t minisketch_bits(const minisketch* sketch);
@@ -82,14 +85,11 @@ MINISKETCH_API uint32_t minisketch_implementation(const minisketch* sketch);
 
 /** Set the seed for randomizing algorithm choices to a fixed value.
  *
- * By default, sketches are initialized with a random seed. This is important
- * to avoid scenarios where an attacker could force worst-case behavior.
- *
- * This function initializes the seed to a user-provided value (any 64-bit
- * integer is acceptable, regardless of field size).
+ * This is equivalent to recreating the sketch with a different RNG seed.
  *
  * When seed is -1, a fixed internal value with predictable behavior is
- * used. It is only intended for testing.
+ * used. It is only intended for testing. Note that minisketch_create does
+ * assign special meaning to seed = -1.
  */
 MINISKETCH_API void minisketch_set_seed(minisketch* sketch, uint64_t seed);
 
@@ -263,16 +263,16 @@ public:
      * ImplementationSupported(), or OOM occurs internally, an invalid Minisketch
      * object will be constructed. Use operator bool() to check that this isn't the
      * case before performing any other operations. */
-    Minisketch(uint32_t bits, uint32_t implementation, size_t capacity) noexcept
+    Minisketch(uint32_t bits, uint32_t implementation, size_t capacity, uint64_t seed) noexcept
     {
-        m_minisketch = std::unique_ptr<minisketch, Deleter>(minisketch_create(bits, implementation, capacity));
+        m_minisketch = std::unique_ptr<minisketch, Deleter>(minisketch_create(bits, implementation, capacity, seed));
     }
 
     /** Create a Minisketch object sufficiently large for the specified number of elements at given fpbits.
      *  It may construct an invalid object, which you may need to check for. */
-    static Minisketch CreateFP(uint32_t bits, uint32_t implementation, size_t max_elements, uint32_t fpbits) noexcept
+    static Minisketch CreateFP(uint32_t bits, uint32_t implementation, size_t max_elements, uint32_t fpbits, uint64_t seed) noexcept
     {
-        return Minisketch(bits, implementation, ComputeCapacity(bits, max_elements, fpbits));
+        return Minisketch(bits, implementation, ComputeCapacity(bits, max_elements, fpbits), seed);
     }
 
     /** Return the field size for a (valid) Minisketch object. */

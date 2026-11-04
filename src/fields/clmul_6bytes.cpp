@@ -121,49 +121,49 @@ typedef Field<uint64_t, 48, 45, StatTable48, &SQR_TABLE_48, &SQR2_TABLE_48, &SQR
 #endif
 }
 
-Sketch* ConstructClMul6Bytes(int bits, int implementation) {
+Sketch* ConstructClMul6Bytes(int bits, int implementation, uint64_t seed) {
     switch (bits) {
 #ifdef ENABLE_FIELD_INT_41
-    case 41: return new SketchImpl<Field41>(implementation, 41);
+    case 41: return new SketchImpl<Field41>(implementation, 41, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_42
-    case 42: return new SketchImpl<Field42>(implementation, 42);
+    case 42: return new SketchImpl<Field42>(implementation, 42, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_43
-    case 43: return new SketchImpl<Field43>(implementation, 43);
+    case 43: return new SketchImpl<Field43>(implementation, 43, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_44
-    case 44: return new SketchImpl<Field44>(implementation, 44);
+    case 44: return new SketchImpl<Field44>(implementation, 44, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_45
-    case 45: return new SketchImpl<Field45>(implementation, 45);
+    case 45: return new SketchImpl<Field45>(implementation, 45, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_47
-    case 47: return new SketchImpl<Field47>(implementation, 47);
+    case 47: return new SketchImpl<Field47>(implementation, 47, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_48
-    case 48: return new SketchImpl<Field48>(implementation, 48);
+    case 48: return new SketchImpl<Field48>(implementation, 48, seed);
 #endif
     }
     return nullptr;
 }
 
-Sketch* ConstructClMulTri6Bytes(int bits, int implementation) {
+Sketch* ConstructClMulTri6Bytes(int bits, int implementation, uint64_t seed) {
     switch (bits) {
 #ifdef ENABLE_FIELD_INT_41
-    case 41: return new SketchImpl<FieldTri41>(implementation, 41);
+    case 41: return new SketchImpl<FieldTri41>(implementation, 41, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_42
-    case 42: return new SketchImpl<FieldTri42>(implementation, 42);
+    case 42: return new SketchImpl<FieldTri42>(implementation, 42, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_44
-    case 44: return new SketchImpl<FieldTri44>(implementation, 44);
+    case 44: return new SketchImpl<FieldTri44>(implementation, 44, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_46
-    case 46: return new SketchImpl<FieldTri46>(implementation, 46);
+    case 46: return new SketchImpl<FieldTri46>(implementation, 46, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_47
-    case 47: return new SketchImpl<FieldTri47>(implementation, 47);
+    case 47: return new SketchImpl<FieldTri47>(implementation, 47, seed);
 #endif
     }
     return nullptr;

@@ -92,32 +92,32 @@ typedef Field<uint64_t, 40, 57, StatTable40, DynTable40, &SQR_TABLE_40, &QRT_TAB
 #endif
 }
 
-Sketch* ConstructGeneric5Bytes(int bits, int implementation)
+Sketch* ConstructGeneric5Bytes(int bits, int implementation, uint64_t seed)
 {
     switch (bits) {
 #ifdef ENABLE_FIELD_INT_33
-    case 33: return new SketchImpl<Field33>(implementation, 33);
+    case 33: return new SketchImpl<Field33>(implementation, 33, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_34
-    case 34: return new SketchImpl<Field34>(implementation, 34);
+    case 34: return new SketchImpl<Field34>(implementation, 34, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_35
-    case 35: return new SketchImpl<Field35>(implementation, 35);
+    case 35: return new SketchImpl<Field35>(implementation, 35, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_36
-    case 36: return new SketchImpl<Field36>(implementation, 36);
+    case 36: return new SketchImpl<Field36>(implementation, 36, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_37
-    case 37: return new SketchImpl<Field37>(implementation, 37);
+    case 37: return new SketchImpl<Field37>(implementation, 37, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_38
-    case 38: return new SketchImpl<Field38>(implementation, 38);
+    case 38: return new SketchImpl<Field38>(implementation, 38, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_39
-    case 39: return new SketchImpl<Field39>(implementation, 39);
+    case 39: return new SketchImpl<Field39>(implementation, 39, seed);
 #endif
 #ifdef ENABLE_FIELD_INT_40
-    case 40: return new SketchImpl<Field40>(implementation, 40);
+    case 40: return new SketchImpl<Field40>(implementation, 40, seed);
 #endif
     default: return nullptr;
     }

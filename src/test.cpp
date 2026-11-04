@@ -28,13 +28,13 @@ uint64_t Combination(uint64_t n, uint64_t k) {
 }
 
 /** Create a vector with Minisketch objects, one for each implementation. */
-std::vector<Minisketch> CreateSketches(uint32_t bits, size_t capacity) {
+std::vector<Minisketch> CreateSketches(uint32_t bits, size_t capacity, uint64_t seed) {
     if (!Minisketch::BitsSupported(bits)) return {};
     std::vector<Minisketch> ret;
     for (uint32_t impl = 0; impl <= Minisketch::MaxImplementation(); ++impl) {
         if (Minisketch::ImplementationSupported(bits, impl)) {
             CHECK(Minisketch::BitsSupported(bits));
-            ret.push_back(Minisketch(bits, impl, capacity));
+            ret.push_back(Minisketch(bits, impl, capacity, seed));
             CHECK((bool)ret.back());
         } else {
             // implementation 0 must always work unless field size is disabled
@@ -46,10 +46,10 @@ std::vector<Minisketch> CreateSketches(uint32_t bits, size_t capacity) {
 
 /** Test properties by exhaustively decoding all 2**(bits*capacity) sketches
  *  with specified capacity and bits. */
-void TestExhaustive(uint32_t bits, size_t capacity) {
-    auto sketches = CreateSketches(bits, capacity);
+void TestExhaustive(uint32_t bits, size_t capacity, uint64_t seed) {
+    auto sketches = CreateSketches(bits, capacity, seed);
     if (sketches.empty()) return;
-    auto sketches_rebuild = CreateSketches(bits, capacity);
+    auto sketches_rebuild = CreateSketches(bits, capacity, seed + 1);
 
     std::vector<unsigned char> serialized;
     std::vector<unsigned char> serialized_empty;
@@ -125,6 +125,7 @@ void TestExhaustive(uint32_t bits, size_t capacity) {
 /** Test properties of sketches with random elements put in. */
 void TestRandomized(uint32_t bits, size_t max_capacity, size_t iter) {
     std::random_device rnd;
+    std::uniform_int_distribution<uint64_t> seed_dist;
     std::uniform_int_distribution<uint64_t> capacity_dist(0, std::min<uint64_t>(std::numeric_limits<uint64_t>::max() >> (64 - bits), max_capacity));
     std::uniform_int_distribution<uint64_t> element_dist(1, std::numeric_limits<uint64_t>::max() >> (64 - bits));
     std::uniform_int_distribution<uint64_t> rand64(0, std::numeric_limits<uint64_t>::max());
@@ -138,7 +139,7 @@ void TestRandomized(uint32_t bits, size_t max_capacity, size_t iter) {
     for (size_t i = 0; i < iter; ++i) {
         // Determine capacity, and construct Minisketch objects for all implementations.
         uint64_t capacity = capacity_dist(rnd);
-        auto sketches = CreateSketches(bits, capacity);
+        auto sketches = CreateSketches(bits, capacity, seed_dist(rnd));
         // Sanity checks
         if (sketches.empty()) return;
         for (size_t impl = 0; impl < sketches.size(); ++impl) {
@@ -268,6 +269,8 @@ void TestComputeFunctions() {
 } // namespace
 
 int main(int argc, char** argv) {
+    std::random_device rnd;
+    std::uniform_int_distribution<uint64_t> seed_dist;
     uint64_t test_complexity = 4;
     if (argc > 1) {
         size_t len = 0;
@@ -307,7 +310,7 @@ int main(int argc, char** argv) {
         for (int bits = 2; weight == 0 ? bits <= 64 : (bits <= 32 && bits <= weight); ++bits) {
             int capacity = weight / bits;
             if (capacity * bits != weight) continue;
-            TestExhaustive(bits, capacity);
+            TestExhaustive(bits, capacity, seed_dist(rnd));
         }
         if (weight >= 16 && test_complexity >> (weight - 16) == 0) break;
     }
